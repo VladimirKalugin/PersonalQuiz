@@ -22,7 +22,12 @@ class QuestionsViewController: UIViewController {
     @IBOutlet var multipleSwithes: [UISwitch]!
     @IBOutlet var rangedLabels: [UILabel]!
     
-    @IBOutlet var rangedSlider: UISlider!
+    @IBOutlet var rangedSlider: UISlider! {
+        didSet {
+            let answersCount = Float(questions[questionIndex].answers.count - 1)
+            rangedSlider.maximumValue = answersCount
+        }
+    }
     @IBOutlet var questionProgressView: UIProgressView!
     
     // MARK: - Private Properties
@@ -59,8 +64,7 @@ class QuestionsViewController: UIViewController {
     }
     
     @IBAction func rangedAnswerButtonPressed() {
-        let index = lrintf(rangedSlider.value * Float(currentAnswers.count - 1))
-        
+        let index = lrintf(rangedSlider.value)
         answersChoosen.append(currentAnswers[index])
         nextQuestion()
     }

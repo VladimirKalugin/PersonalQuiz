@@ -10,7 +10,7 @@ import UIKit
 
 
 class ResultsViewController: UIViewController {
-
+    
     //MARK: - IBOutlet
     @IBOutlet var animalFaceLabel: UILabel!
     @IBOutlet var discriptionLabel: UILabel!
@@ -24,44 +24,44 @@ class ResultsViewController: UIViewController {
     //MARK: - Public property
     var userAnswers: [Answer] = []
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         navigationItem.hidesBackButton = true
-        print(userAnswers)
-        showResult(userAnswers)
+        updateResult()
     }
+}
+
+
+//MARK: - Private func
+extension ResultsViewController {
     
-    //MARK: - Private func
-    private func showResult(_ answers: [Answer]) {
-        for animal in answers {
-            switch animal.type {
-            case .dog:
-                countOfDogs += 1
-                if countOfDogs >= 2 {
-                    animalFaceLabel.text = "Вы - \(animal.type.rawValue)"
-                    discriptionLabel.text = animal.type.definition
-                }
-            case .cat:
-                countOfCats += 1
-                if countOfCats >= 2 {
-                    animalFaceLabel.text = "Вы - \(animal.type.rawValue)"
-                    discriptionLabel.text = animal.type.definition
-                }
-            case .rabbit:
-                countOfRabbits += 1
-                if countOfRabbits >= 2 {
-                    animalFaceLabel.text = "Вы - \(animal.type.rawValue)"
-                    discriptionLabel.text = animal.type.definition
-                }
-            case .turtle:
-                countOfTurtles += 1
-                if countOfTurtles >= 2 {
-                    animalFaceLabel.text = "Вы - \(animal.type.rawValue)"
-                    discriptionLabel.text = animal.type.definition
-                }
+    private func updateResult() {
+        
+        var dictionaryOfAnimals: [AnimalType: Int] = [:]
+        let animals = userAnswers.map { $0.type }
+        
+        for animal in animals {
+            if let animalTypeCount = dictionaryOfAnimals[animal] {
+                dictionaryOfAnimals.updateValue(animalTypeCount + 1, forKey: animal)
+            } else {
+                dictionaryOfAnimals[animal] = 1
             }
         }
+        
+        let sortedDictionaryOfAnimal = dictionaryOfAnimals.sorted { $0.value > $1.value }
+        guard let mostFrequencyAnimal = sortedDictionaryOfAnimal.first?.key else {return}
+        
+//        // Extra solution
+//        let mostFrequencyAnimal = Dictionary(grouping: userAnswers, by: { $0.type} )
+//            .sorted(by: {$0.value.count > $1.value.count})
+//            .first?.key
+//
+        updateUI(with: mostFrequencyAnimal )
+    }
+    
+    private func updateUI(with animal: AnimalType) {
+        animalFaceLabel.text = "Вы - \(animal.rawValue)"
+        discriptionLabel.text = animal.definition
     }
 }
